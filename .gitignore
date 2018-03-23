@@ -1,0 +1,6 @@
+*.pyc
+*.npy
+*.csv
+*.hdf5
+/numpy_data/
+/raw_data/
