@@ -45,11 +45,11 @@ def create_numpy_data(input_fold, crop_shape, strides=(1, 1, 1), output_fold='',
 
 
 def main():
-    input_train_fold = '/home/zhygallo/Documents/GuidedResearch/lesion_segmentation/raw_data/train/'
-    input_test_fold = '/home/zhygallo/Documents/GuidedResearch/lesion_segmentation/raw_data/test/'
+    input_train_fold = 'raw_data/train/'
+    input_test_fold = 'raw_data/test/'
     crop_shape = (128, 128, 64)
     strides = (10, 10, 10)
-    output_folder = '/home/zhygallo/Documents/GuidedResearch/lesion_segmentation/numpy_data/'
+    output_folder = 'numpy_data/'
     create_numpy_data(input_train_fold, crop_shape, strides, output_folder, type='train')
     create_numpy_data(input_test_fold, crop_shape, strides, output_folder, type='test')
 

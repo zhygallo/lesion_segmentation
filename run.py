@@ -1,5 +1,4 @@
 from __future__ import print_function
-import os
 import numpy as np
 from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint
@@ -17,8 +16,8 @@ def main():
     # num_classes = 2
     epochs = 20
 
-    imgs_train = np.load('/home/zhygallo/Documents/GuidedResearch/lesion_segmentation/numpy_data/train_imgs.npy')
-    masks_train = np.load('/home/zhygallo/Documents/GuidedResearch/lesion_segmentation/numpy_data/train_masks.npy')
+    imgs_train = np.load('numpy_data/train_imgs.npy')
+    masks_train = np.load('numpy_data/train_masks.npy')
 
     imgs_train = imgs_train.astype('float32')
     mean = np.mean(imgs_train)  # mean for data centering
@@ -29,7 +28,6 @@ def main():
 
     masks_train = masks_train.astype('float32')
     # masks_train /= 255.  # scale masks to [0, 1]
-
 
     model = get_model(crop_shape)
     model = multi_gpu_utils(model, gpus=2)
