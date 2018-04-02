@@ -2,5 +2,6 @@
 *.npy
 *.csv
 *.hdf5
+*.h5
 numpy_data/
 raw_data/
