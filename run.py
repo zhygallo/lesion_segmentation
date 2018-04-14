@@ -11,8 +11,8 @@ from metrics import dice_coef
 
 def main():
     crop_shape = (128, 128, 64)
-    batch_size = 32
-    epochs = 2
+    batch_size = 1
+    epochs = 1
 
     imgs_train = np.load('numpy_data/train_imgs.npy')
     masks_train = np.load('numpy_data/train_masks.npy')

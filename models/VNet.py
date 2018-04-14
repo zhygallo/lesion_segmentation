@@ -87,10 +87,11 @@ def get_model(input_shape, n_channels=1, weights_path=None):
     prelu9_1 = PReLU()(conv9_1)
     add9 = Add()([prelu9_1, concat9])
 
-    conv9_2 = Conv3D(2, (1, 1, 1), padding='same')(add9)
+    conv9_2 = Conv3D(1, (1, 1, 1), padding='same', activation='sigmoid')(add9)
 
-    softmax = Softmax()(conv9_2)
+    # softmax = Softmax()(conv9_2)
+    # model = Model(inputs=[input_layer], outputs=[softmax])
 
-    model = Model(inputs=[input_layer], outputs=[softmax])
+    model = Model(input=[input_layer], outputs=[conv9_2])
 
     return model
