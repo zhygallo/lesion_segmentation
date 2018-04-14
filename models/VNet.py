@@ -1,5 +1,5 @@
 from keras.models import Model
-from keras.layers import Input, Conv3D, Conv3DTranspose, Concatenate, Add, PReLU, Softmax
+from keras.layers import Input, Conv3D, Conv3DTranspose, Concatenate, Add, PReLU
 
 
 def get_model(input_shape, n_channels=1, weights_path=None):
@@ -87,7 +87,7 @@ def get_model(input_shape, n_channels=1, weights_path=None):
     prelu9_1 = PReLU()(conv9_1)
     add9 = Add()([prelu9_1, concat9])
 
-    conv9_2 = Conv3D(1, (1, 1, 1), padding='same', activation='sigmoid')(add9)
+    conv9_2 = Conv3D(2, (1, 1, 1), padding='same', activation='softmax')(add9)
 
     # softmax = Softmax()(conv9_2)
     # model = Model(inputs=[input_layer], outputs=[softmax])

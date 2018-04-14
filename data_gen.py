@@ -6,7 +6,7 @@ import numpy as np
 import nibabel as nib
 
 
-def create_numpy_data(input_fold, crop_shape, strides=(1, 1, 1), output_fold='', type='train'):
+def create_numpy_data(input_fold, crop_shape, strides=(1, 1, 1), output_fold=''):
     img_files = os.listdir(os.path.join(input_fold, 'images'))
     mask_files = os.listdir(os.path.join(input_fold, 'masks'))
 
@@ -38,20 +38,18 @@ def create_numpy_data(input_fold, crop_shape, strides=(1, 1, 1), output_fold='',
     masks = np.array(masks)
 
     if output_fold != '':
-        np.save(os.path.join(output_fold, type + '_imgs'), imgs)
-        np.save(os.path.join(output_fold, type + '_masks'), masks)
+        np.save(os.path.join(output_fold, 'images'), imgs)
+        np.save(os.path.join(output_fold, 'masks'), masks)
 
     return imgs, masks
 
 
 def main():
-    input_train_fold = 'raw_data/train/'
-    input_test_fold = 'raw_data/test/'
+    input_fold = 'raw_data/'
     crop_shape = (128, 128, 64)
     strides = (10, 10, 10)
     output_folder = 'numpy_data/'
-    create_numpy_data(input_train_fold, crop_shape, strides, output_folder, type='train')
-    create_numpy_data(input_test_fold, crop_shape, strides, output_folder, type='test')
+    create_numpy_data(input_fold, crop_shape, strides, output_folder)
 
 
 if __name__ == '__main__':
