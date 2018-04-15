@@ -32,8 +32,9 @@ def main():
     # model_checkpoint = ModelCheckpoint('weights.h5', monitor='val_loss', save_best_only=True)
     # model.fit(imgs_train, masks_train, batch_size=batch_size, epochs=epochs, verbose=1, shuffle=True,
     #           callbacks=[model_checkpoint], validation_data=(imgs_test, masks_test))
-
+    model_checkpoint = ModelCheckpoint('weights.h5', monitor='val_loss', save_best_only=True)
     model.fit(data, masks, batch_size=batch_size, epochs=epochs, verbose=1, shuffle=True,
+              callbacks=[model_checkpoint],
               validation_split=0.2)
 
     return 0
