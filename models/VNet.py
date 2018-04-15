@@ -92,6 +92,6 @@ def get_model(input_shape, n_channels=1, weights_path=None):
     # softmax = Softmax()(conv9_2)
     # model = Model(inputs=[input_layer], outputs=[softmax])
 
-    model = Model(input=[input_layer], outputs=[conv9_2])
+    model = Model(inputs=[input_layer], outputs=[conv9_2])
 
     return model

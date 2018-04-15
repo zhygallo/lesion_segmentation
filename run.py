@@ -7,12 +7,13 @@ K.set_image_data_format('channels_last')
 
 from models.VNet import get_model
 from losses import dice_coef_loss
-from metrics import dice_coef, tf_dice_coef
+from metrics import dice_coef, recall, f1_score
 
 def main():
     crop_shape = (128, 128, 64)
-    batch_size = 1
-    epochs = 1
+    batch_size = 4
+    epochs = 40
+    learning_rate = 1e-5
 
     data = np.load('numpy_data/images.npy')
     data = data.astype('float32')
@@ -25,7 +26,8 @@ def main():
     masks = masks.astype('float32')
 
     model = get_model(crop_shape)
-    model.compile(optimizer=Adam(lr=1e-5), loss=dice_coef_loss, metrics=[tf_dice_coef, dice_coef])
+    model.compile(optimizer=Adam(lr=learning_rate), loss=dice_coef_loss,
+                  metrics=[dice_coef, recall, f1_score])
 
     # model_checkpoint = ModelCheckpoint('weights.h5', monitor='val_loss', save_best_only=True)
     # model.fit(imgs_train, masks_train, batch_size=batch_size, epochs=epochs, verbose=1, shuffle=True,
@@ -33,11 +35,6 @@ def main():
 
     model.fit(data, masks, batch_size=batch_size, epochs=epochs, verbose=1, shuffle=True,
               validation_split=0.2)
-
-    # print("Testing")
-    # score = model.evaluate(imgs_test, masks_test, batch_size=batch_size)
-    # print('Test score: ' + str(score))
-    # print('Test score:', score)
 
     return 0
 

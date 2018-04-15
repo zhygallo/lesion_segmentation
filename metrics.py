@@ -1,31 +1,31 @@
+import tensorlayer as tl
+import tensorflow as tf
 from keras import backend as K
-K.set_image_data_format('channels_last')  # TF dimension ordering in this code
-import tensorlayer
-
-def tf_dice_coef(y_true, y_pred):
-    y_pred = y_pred[:,:,:,:,1]
-    y_true = y_true[:, :, :, 1]
-    return tensorlayer.cost.dice_coe(y_pred, y_true, smooth = 1)
 
 def dice_coef(y_true, y_pred):
-    y_true_f = K.flatten(y_true)
-    # y_pred_f = K.flatten(y_pred)
-    y_pred_f = K.reshape(y_pred, (-1, 2))[:, 1]
-    intersection = K.sum(y_true_f * y_pred_f)
-    return (2. * intersection + 1) / (K.sum(y_true_f) + K.sum(y_pred_f) + 1)
+    y_pred = y_pred[:,:,:,:,1:] # take only predictions for possitive class
+    dice = tl.cost.dice_coe(y_pred, y_true, loss_type = 'sorensen', axis=(1,2,3))
+    return dice
 
-# def recall(y_true, y_pred):
-#     y_true_f = K.flatten(y_true)
-#     y_pred_f = K.flatten(y_pred)
-#     c1 = K.sum(K.round(K.clip(y_true_f * y_pred_f, 0, 1)))
-#     # c2 = K.sum(K.round(K.clip(y_pred_f, 0, 1)))
-#     c3 = K.sum(K.round(K.clip(y_true_f, 0, 1)))
-#
-#     return c1 / c3
+def precision(y_true, y_pred):
+    y_pred = y_pred[:, :, :, :, 1:]
+    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
+    precision = true_positives / (predicted_positives + K.epsilon())
+    return precision
 
-# def dice_coef(y_true, y_pred):
-#     y_true_f = K.flatten(y_true)
-#     y_pred_f = K.reshape(y_pred, (-1, 2))
-#     intersection = K.mean(y_true_f * y_pred_f[:, 0]) + K.mean((1.0 - y_true_f) * y_pred_f[:, 1])
-#
-#     return 2. * intersection;
+def recall(y_true, y_pred):
+    y_pred = y_pred[:, :, :, :, 1:]
+    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+    possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
+    recall = true_positives / (possible_positives + K.epsilon())
+    return recall
+
+def f1_score(y_true, y_pred):
+    # y_pred = y_pred[:, :, :, :, 1:]
+    if K.sum(K.round(K.clip(y_true, 0, 1))) == 0:
+        return 0
+    p = precision(y_true, y_pred)
+    r = recall(y_true, y_pred)
+    f1_score = 2 * (p * r) / (p + r + K.epsilon())
+    return f1_score
