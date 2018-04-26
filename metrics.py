@@ -7,6 +7,11 @@ def dice_coef(y_true, y_pred):
     dice = tl.cost.dice_coe(y_pred, y_true, loss_type = 'sorensen', axis=(1,2,3))
     return dice
 
+def iou_coe(y_true, y_pred):
+    y_pred = y_pred[:, :, :, :, 1:]
+    iou = tl.cost.iou_coe(y_pred, y_true)
+    return iou
+
 def precision(y_true, y_pred):
     y_pred = y_pred[:, :, :, :, 1:]
     true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))

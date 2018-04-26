@@ -8,7 +8,7 @@ K.set_image_data_format('channels_last')
 
 from models.VNet import get_model
 from losses import dice_coef_loss
-from metrics import dice_coef, recall, f1_score
+from metrics import dice_coef, recall, f1_score, iou_coe
 
 @click.command()
 @click.argument('images_numpy_file')
@@ -32,7 +32,7 @@ def main(images_numpy_file, masks_numpy_file, outdir):
 
     model = get_model(crop_shape)
     model.compile(optimizer=Adam(lr=learning_rate), loss=dice_coef_loss,
-                  metrics=[dice_coef, recall, f1_score])
+                  metrics=[dice_coef, iou_coe, recall, f1_score])
 
     model_checkpoint = ModelCheckpoint(outdir+'/weights.h5', monitor='val_loss', save_best_only=True)
     model.fit(data, masks, batch_size=batch_size, epochs=epochs, verbose=1, shuffle=True,
