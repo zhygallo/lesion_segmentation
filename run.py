@@ -11,33 +11,35 @@ from losses import dice_coef_loss
 from metrics import dice_coef, recall, f1_score, iou_coe
 
 @click.command()
-@click.argument('images_numpy_file')
-@click.argument('masks_numpy_file')
+@click.argument('train_images')
+@click.argument('train_masks')
+@click.argument('test_images')
+@click.argument('test_masks')
 @click.argument('outdir')
-def main(images_numpy_file, masks_numpy_file, outdir):
+def main(train_images, train_masks, test_images, test_masks, outdir):
     crop_shape = (128, 128, 64)
     batch_size = 4
     epochs = 40
     learning_rate = 1e-5
 
-    data = np.load(images_numpy_file)
-    data = data.astype('float32')
-    mean = np.mean(data)  # mean for data centering
-    std = np.std(data)  # std for data normalization
-    data -= mean
-    data /= std
+    train_data = np.load(train_images)
+    train_data = train_data.astype('float32')
+    train_masks = np.load(train_masks)
+    train_masks = train_masks.astype('float32')
 
-    masks = np.load(masks_numpy_file)
-    masks = masks.astype('float32')
+    test_data = np.load(test_images)
+    test_data = test_data.astype('float32')
+    test_masks = np.load(test_masks)
+    test_masks = test_masks.astype('float32')
 
     model = get_model(crop_shape)
     model.compile(optimizer=Adam(lr=learning_rate), loss=dice_coef_loss,
                   metrics=[dice_coef, iou_coe, recall, f1_score])
 
     model_checkpoint = ModelCheckpoint(outdir+'/weights.h5', monitor='val_loss', save_best_only=True)
-    model.fit(data, masks, batch_size=batch_size, epochs=epochs, verbose=1, shuffle=True,
+    model.fit(train_data, train_masks, batch_size=batch_size, epochs=epochs, verbose=1, shuffle=True,
               callbacks=[model_checkpoint],
-              validation_split=0.2)
+              validation_data=(test_data, test_masks))
 
     return 0
 

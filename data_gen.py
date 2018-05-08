@@ -7,7 +7,7 @@ import random
 import nibabel as nib
 
 
-def get_random_patches(input_fold, crop_shape, patch_per_img=5, output_fold=''):
+def get_random_patches(input_fold, crop_shape, patch_per_img=5, normalize=True, output_fold=''):
     img_files = os.listdir(os.path.join(input_fold, 'images'))
     mask_files = os.listdir(os.path.join(input_fold, 'masks'))
 
@@ -31,6 +31,9 @@ def get_random_patches(input_fold, crop_shape, patch_per_img=5, output_fold=''):
             crop_mask = mask[row:row + crop_shape[0], col:col + crop_shape[1], dep:dep + crop_shape[2]]
             crop_img = np.reshape(crop_img, (crop_img.shape[0], crop_img.shape[1], crop_img.shape[2], 1))
             crop_mask = np.reshape(crop_mask, (crop_mask.shape[0], crop_mask.shape[1], crop_mask.shape[2], 1))
+            if normalize == True:
+                crop_img -= np.mean(crop_img)
+                crop_img /= np.std(crop_img)
             imgs[file_ind * patch_ind] = crop_img
             masks[file_ind * patch_ind] = crop_mask
 
@@ -41,7 +44,7 @@ def get_random_patches(input_fold, crop_shape, patch_per_img=5, output_fold=''):
     return imgs, masks
 
 
-def get_stride_patches(input_fold, crop_shape, strides=(1, 1, 1), output_fold=''):
+def get_stride_patches(input_fold, crop_shape, strides=(1, 1, 1), normalize=True, output_fold=''):
     img_files = os.listdir(os.path.join(input_fold, 'images'))
     mask_files = os.listdir(os.path.join(input_fold, 'masks'))
 
@@ -65,6 +68,9 @@ def get_stride_patches(input_fold, crop_shape, strides=(1, 1, 1), output_fold=''
                     crop_mask = mask[row:row + crop_shape[0], col:col + crop_shape[1], depth:depth + crop_shape[2]]
                     crop_img = np.reshape(crop_img, (crop_img.shape[0], crop_img.shape[1], crop_img.shape[2], 1))
                     crop_mask = np.reshape(crop_mask, (crop_mask.shape[0], crop_mask.shape[1], crop_mask.shape[2], 1))
+                    if normalize == True:
+                        crop_img -= np.mean(crop_img)
+                        crop_img /= np.std(crop_img)
                     imgs.append(crop_img)
                     masks.append(crop_mask)
 
@@ -80,16 +86,16 @@ def get_stride_patches(input_fold, crop_shape, strides=(1, 1, 1), output_fold=''
 
 
 def main():
-    input_fold = 'raw_data/'
+    input_fold = 'raw_data/test/'
     crop_shape = (128, 128, 64)
 
     # strides = (10, 10, 10)
     # output_folder = 'numpy_data/'
     # get_stride_patches(input_fold, crop_shape, strides, output_folder)
-
-    output_folder = 'np_random_crop/'
-    num_patches = 5
-    get_random_patches(input_fold, crop_shape, num_patches, output_folder)
+    num_patches = 10
+    normilize = True
+    output_folder = 'np_rand_crop/test/'
+    get_random_patches(input_fold, crop_shape, num_patches, normilize, output_folder)
 
 
 if __name__ == '__main__':

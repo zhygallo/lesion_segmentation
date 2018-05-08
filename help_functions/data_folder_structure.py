@@ -47,9 +47,9 @@ def gen_train_test_folds(input_fold, output_fold, train_data_part = 0.8):
         shutil.copy(tuple[1], new_mask_path)
 
 def main():
-    input_fold = '/home/zhygallo/zhygallo/tum/GuidedResearch/MS_database/'
-    output_img_fold = '/home/zhygallo/zhygallo/tum/GuidedResearch/MS_database_img_mask/images/'
-    output_mask_fold = '/home/zhygallo/zhygallo/tum/GuidedResearch/MS_database_img_mask/masks/'
+    input_fold = '/home/zhygallo/zhygallo/tum/GuidedResearch/MS_database/controls/'
+    output_img_fold = '/home/zhygallo/zhygallo/tum/GuidedResearch/lesion_segmentation/raw_data/test/images/'
+    output_mask_fold = '/home/zhygallo/zhygallo/tum/GuidedResearch/lesion_segmentation/raw_data/test/masks/'
 
     gen_img_mask_folders(input_fold, output_img_fold, output_mask_fold)
 
