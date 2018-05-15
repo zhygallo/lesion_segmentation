@@ -5,3 +5,4 @@
 *.h5
 numpy_data/
 raw_data/
+raw_data_no_control/

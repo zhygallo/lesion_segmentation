@@ -3,12 +3,13 @@ import click
 import numpy as np
 from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint
+from keras.models import load_model
 from keras import backend as K
 K.set_image_data_format('channels_last')
 
 from models.VNet import get_model
 from losses import dice_coef_loss
-from metrics import dice_coef, recall, f1_score, iou_coe
+from metrics import dice_coef, recall, f1_score
 
 @click.command()
 @click.argument('train_images')
@@ -33,13 +34,20 @@ def main(train_images, train_masks, test_images, test_masks, outdir):
     test_masks = test_masks.astype('float32')
 
     model = get_model(crop_shape)
+
+    model.load_weights(outdir + '/weights.h5')
+
     model.compile(optimizer=Adam(lr=learning_rate), loss=dice_coef_loss,
-                  metrics=[dice_coef, iou_coe, recall, f1_score])
+                  metrics=[dice_coef, recall, f1_score])
 
     model_checkpoint = ModelCheckpoint(outdir+'/weights.h5', monitor='val_loss', save_best_only=True)
-    model.fit(train_data, train_masks, batch_size=batch_size, epochs=epochs, verbose=1, shuffle=True,
+
+    model.fit(train_data, train_masks, batch_size=batch_size, epochs=epochs,
+              verbose=1, shuffle=True,
               callbacks=[model_checkpoint],
               validation_data=(test_data, test_masks))
+
+    # new_model = load_model(outdir+'/weights.h5')
 
     return 0
 
