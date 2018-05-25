@@ -87,7 +87,7 @@ def get_stride_patches(input_fold, crop_shape, strides=(1, 1, 1), normalize=True
 
 def main():
     input_fold = 'raw_data_no_control/train/'
-    crop_shape = (128, 128, 64)
+    crop_shape = (64, 64, 32)
 
     # strides = (10, 10, 10)
     # output_folder = 'numpy_data/'

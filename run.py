@@ -6,10 +6,13 @@ from keras.callbacks import ModelCheckpoint
 from keras.models import load_model
 from keras import backend as K
 K.set_image_data_format('channels_last')
+import os
 
 from models.VNet import get_model
 from losses import dice_coef_loss
 from metrics import dice_coef, recall, f1_score
+
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 @click.command()
 @click.argument('train_images')
@@ -18,7 +21,8 @@ from metrics import dice_coef, recall, f1_score
 @click.argument('test_masks')
 @click.argument('outdir')
 def main(train_images, train_masks, test_images, test_masks, outdir):
-    crop_shape = (128, 128, 64)
+    # crop_shape = (128, 128, 64)
+    crop_shape = (56, 56, 32)
     batch_size = 4
     epochs = 40
     learning_rate = 1e-5
