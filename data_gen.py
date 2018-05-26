@@ -86,15 +86,15 @@ def get_stride_patches(input_fold, crop_shape, strides=(1, 1, 1), normalize=True
 
 
 def main():
-    input_fold = 'raw_data_no_control/train/'
+    input_fold = 'raw_data_no_control/test/'
     crop_shape = (64, 64, 32)
 
     # strides = (10, 10, 10)
     # output_folder = 'numpy_data/'
     # get_stride_patches(input_fold, crop_shape, strides, output_folder)
-    num_patches = 15
+    num_patches = 20
     normilize = True
-    output_folder = 'np_rand_crop/train/'
+    output_folder = 'np_rand_crop/test/'
     get_random_patches(input_fold, crop_shape, num_patches, normilize, output_folder)
 
 
