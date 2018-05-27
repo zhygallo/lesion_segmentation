@@ -24,7 +24,7 @@ def main(train_images, train_masks, test_images, test_masks, outdir):
     # crop_shape = (128, 128, 64)
     crop_shape = (64, 64, 32)
     batch_size = 4
-    epochs = 40
+    epochs = 400
     learning_rate = 1e-5
 
     train_data = np.load(train_images)
@@ -39,7 +39,7 @@ def main(train_images, train_masks, test_images, test_masks, outdir):
 
     model = get_model(crop_shape)
 
-    # model.load_weights(outdir + '/weights.h5')
+    model.load_weights(outdir + '/weights.h5')
 
     model.compile(optimizer=Adam(lr=learning_rate), loss=dice_coef_loss,
                   metrics=[dice_coef, recall, f1_score])
