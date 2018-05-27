@@ -23,9 +23,9 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 def main(train_images, train_masks, test_images, test_masks, outdir):
     # crop_shape = (128, 128, 64)
     crop_shape = (64, 64, 32)
-    batch_size = 8
+    batch_size = 4
     epochs = 40
-    learning_rate = 1e-6
+    learning_rate = 1e-5
 
     train_data = np.load(train_images)
     train_data = train_data.astype('float32')
