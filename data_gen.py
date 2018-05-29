@@ -90,16 +90,19 @@ def get_stride_patches(input_fold, crop_shape, strides=(1, 1, 1), normalize=True
 
 
 def main():
-    input_fold = 'raw_data_no_control/test/'
-    crop_shape = (64, 64, 32)
+    input_fold_train = 'raw_data_no_control/train/'
+    input_fold_test = 'raw_data_no_control/test/'
+    output_fold_train = 'np_rand_crop/train/'
+    output_fold_test = 'np_rand_crop/test/'
+    crop_shape = (96, 96, 96)
     # crop_shape = (128, 128, 64)
     # strides = (10, 10, 10)
     # output_folder = 'numpy_data/'
     # get_stride_patches(input_fold, crop_shape, strides, output_folder)
-    num_patches = 50
+    num_patches = 30
     normilize = True
-    output_folder = 'np_rand_crop/test/'
-    get_random_patches(input_fold, crop_shape, num_patches, normilize, output_folder)
+    get_random_patches(input_fold_train, crop_shape, num_patches, normilize, output_fold_train)
+    get_random_patches(input_fold_test, crop_shape, num_patches, normilize, output_fold_test)
 
 
 if __name__ == '__main__':

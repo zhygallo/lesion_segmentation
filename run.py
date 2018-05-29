@@ -8,7 +8,7 @@ from keras import backend as K
 K.set_image_data_format('channels_last')
 import os
 
-from models.VNet import get_model
+from models.HighRes3DNet import get_model
 from losses import dice_coef_loss
 from metrics import dice_coef, recall, f1_score
 
@@ -22,7 +22,7 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 @click.argument('outdir')
 def main(train_images, train_masks, test_images, test_masks, outdir):
     # crop_shape = (128, 128, 64)
-    crop_shape = (64, 64, 32)
+    crop_shape = (96, 96, 96)
     batch_size = 4
     epochs = 400
     learning_rate = 1e-5
@@ -39,7 +39,7 @@ def main(train_images, train_masks, test_images, test_masks, outdir):
 
     model = get_model(crop_shape)
 
-    model.load_weights(outdir + '/weights.h5')
+    # model.load_weights(outdir + '/weights.h5')
 
     model.compile(optimizer=Adam(lr=learning_rate), loss=dice_coef_loss,
                   metrics=[dice_coef, recall, f1_score])
