@@ -1,5 +1,5 @@
 from keras.models import Model
-from keras.layers import Input, Conv3D, Softmax, Add, BatchNormalization, PReLU, Concatenate
+from keras.layers import Input, Conv3D, Add, BatchNormalization, PReLU, Concatenate
 
 
 def get_model(input_shape, n_channels=1, weights_path=None):
@@ -96,9 +96,8 @@ def get_model(input_shape, n_channels=1, weights_path=None):
 
     conv20 = Conv3D(160, (1, 1, 1))(add9)
 
-    conv21 = Conv3D(2, (1, 1, 1))(conv20)
-    softmax = Softmax()(conv21)
+    conv21 = Conv3D(2, (1, 1, 1), activation='softmax')(conv20)
 
-    model = Model(inputs=[input_layer], outputs=[softmax])
+    model = Model(inputs=[input_layer], outputs=[conv21])
 
     return model
