@@ -8,11 +8,11 @@ from keras import backend as K
 K.set_image_data_format('channels_last')
 import os
 
-from models.HighRes3DNet import get_model
+from models.SmallHighRes3DNet import get_model
 from losses import dice_coef_loss
 from metrics import dice_coef, recall, f1_score
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+#os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 @click.command()
 @click.argument('train_images')
