@@ -94,7 +94,8 @@ def main():
     input_fold_test = 'raw_data_no_control/test/'
     output_fold_train = 'np_rand_crop_test/train/'
     output_fold_test = 'np_rand_crop_test/test/'
-    crop_shape = (96, 96, 96)
+    crop_shape = (48, 48, 48)
+    # crop_shape = (96, 96, 96)
     # crop_shape = (128, 128, 64)
     # strides = (10, 10, 10)
     # output_folder = 'numpy_data/'
