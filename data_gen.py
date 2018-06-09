@@ -73,8 +73,10 @@ def get_stride_patches(input_fold, crop_shape, strides=(1, 1, 1), normalize=True
                     crop_img = np.reshape(crop_img, (crop_img.shape[0], crop_img.shape[1], crop_img.shape[2], 1))
                     crop_mask = np.reshape(crop_mask, (crop_mask.shape[0], crop_mask.shape[1], crop_mask.shape[2], 1))
                     if normalize == True:
+                        std = np.std(crop_img)
                         crop_img -= np.mean(crop_img)
-                        crop_img /= np.std(crop_img)
+                        if std != 0:
+                            crop_img /= np.std(crop_img)
                     imgs.append(crop_img)
                     masks.append(crop_mask)
 
@@ -95,16 +97,15 @@ def main():
     output_fold_train = 'np_rand_crop/train/'
     output_fold_test = 'np_rand_crop/test/'
     crop_shape = (48, 48, 48)
-    # crop_shape = (96, 96, 96)
-    # crop_shape = (128, 128, 64)
-    # strides = (10, 10, 10)
-    # output_folder = 'numpy_data/'
-    # get_stride_patches(input_fold, crop_shape, strides, output_folder)
-    num_patches = 60
+    num_patches = 500
     normilize = True
-    get_random_patches(input_fold_train, crop_shape, num_patches, normilize, output_fold_train)
-    get_random_patches(input_fold_test, crop_shape, num_patches, normilize, output_fold_test)
+    # get_random_patches(input_fold_train, crop_shape, num_patches, normilize, output_fold_train)
+    # get_random_patches(input_fold_test, crop_shape, num_patches, normilize, output_fold_test)
 
+    input_srtide_fold = 'raw_data_no_control/test/'
+    stides = (10, 10, 10)
+    output_stride_fold = 'np_rand_crop/test_stride/'
+    get_stride_patches(input_srtide_fold, crop_shape, stides, output_fold=output_stride_fold)
 
 if __name__ == '__main__':
     main()
