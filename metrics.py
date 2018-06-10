@@ -14,16 +14,16 @@ def iou_coe(y_true, y_pred):
 
 def precision(y_true, y_pred):
     y_pred = y_pred[:, :, :, :, 1:]
-    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
-    precision = true_positives / (predicted_positives + K.epsilon())
+    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)), axis=(1, 2, 3))
+    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)), axis=(1, 2, 3))
+    precision = K.mean(true_positives / (predicted_positives + K.epsilon()))
     return precision
 
 def recall(y_true, y_pred):
     y_pred = y_pred[:, :, :, :, 1:]
-    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-    possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
-    recall = true_positives / (possible_positives + K.epsilon())
+    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)), axis=(1, 2, 3))
+    possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)), axis=(1, 2, 3))
+    recall = K.mean(true_positives / (possible_positives + K.epsilon()))
     return recall
 
 def f1_score(y_true, y_pred):

@@ -7,7 +7,7 @@ import random
 import nibabel as nib
 
 
-def get_random_patches(input_fold, crop_shape, patch_per_img=5, normalize=True, output_fold=''):
+def get_random_patches(input_fold, crop_shape, patch_per_img=5, normalize=True, balance_rate = 0.2, output_fold=''):
     img_files = os.listdir(os.path.join(input_fold, 'images'))
     mask_files = os.listdir(os.path.join(input_fold, 'masks'))
 
@@ -28,9 +28,17 @@ def get_random_patches(input_fold, crop_shape, patch_per_img=5, normalize=True, 
             row = random.randint(0, img.shape[0] - crop_shape[0])
             col = random.randint(0, img.shape[1] - crop_shape[1])
             dep = random.randint(0, img.shape[2] - crop_shape[2])
+
+            # pos_voxels = np.argwhere(mask==1)
+            # rand_ind = np.random.choice(list(range(pos_voxels.shape[0])))
+            # row, col, dep = pos_voxels[rand_ind]
+            # row -= crop_shape[0] // 2
+            # col -= crop_shape[0] // 2
+            # dep -= crop_shape[0] // 2
             crop_img = img[row:row + crop_shape[0], col:col + crop_shape[1], dep:dep + crop_shape[2]]
             crop_mask = mask[row:row + crop_shape[0], col:col + crop_shape[1], dep:dep + crop_shape[2]]
-            if crop_mask.sum() == 0.0:
+            voxel_num = crop_shape[0] * crop_shape[1] * crop_shape[2]
+            if crop_mask.sum() <= balance_rate * voxel_num:
                 continue
             crop_img = np.reshape(crop_img, (crop_img.shape[0], crop_img.shape[1], crop_img.shape[2], 1))
             crop_mask = np.reshape(crop_mask, (crop_mask.shape[0], crop_mask.shape[1], crop_mask.shape[2], 1))
@@ -96,16 +104,27 @@ def main():
     input_fold_test = 'raw_data_no_control/test/'
     output_fold_train = 'np_rand_crop/train/'
     output_fold_test = 'np_rand_crop/test/'
-    crop_shape = (48, 48, 48)
-    num_patches = 500
+    crop_shape = (64, 64, 64)
+    num_patches = 20
+    balance_rate = 0.0
     normilize = True
-    # get_random_patches(input_fold_train, crop_shape, num_patches, normilize, output_fold_train)
+    # get_random_patches(input_fold_train, crop_shape, num_patches, normilize, balance_rate, output_fold_train)
     # get_random_patches(input_fold_test, crop_shape, num_patches, normilize, output_fold_test)
 
     input_srtide_fold = 'raw_data_no_control/test/'
-    stides = (10, 10, 10)
+    strides = (32, 32, 32)
     output_stride_fold = 'np_rand_crop/test_stride/'
-    get_stride_patches(input_srtide_fold, crop_shape, stides, output_fold=output_stride_fold)
+    get_stride_patches(input_srtide_fold, crop_shape, strides, output_fold=output_stride_fold)
+
+    rand_train_img, rand_train_mask = get_random_patches(input_fold_train, crop_shape, num_patches, normilize,
+                                                         balance_rate)
+    stride_train_img, stride_train_mask = get_stride_patches(input_fold_train, crop_shape, strides)
+
+    train_img = np.concatenate((rand_train_img, stride_train_img), axis=0)
+    train_mask = np.concatenate((rand_train_mask, stride_train_mask), axis=0)
+
+    np.save(os.path.join(output_fold_train, 'images'), train_img)
+    np.save(os.path.join(output_fold_train, 'masks'), train_mask)
 
 if __name__ == '__main__':
     main()

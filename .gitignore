@@ -3,6 +3,7 @@
 *.csv
 *.hdf5
 *.h5
+*.nii
 numpy_data/
 raw_data/
 raw_data_no_control/
