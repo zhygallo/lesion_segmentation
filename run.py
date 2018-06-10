@@ -3,7 +3,6 @@ import click
 import numpy as np
 from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint
-from keras.models import load_model
 from keras import backend as K
 K.set_image_data_format('channels_last')
 import os
@@ -23,7 +22,7 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 def main(train_images, train_masks, test_images, test_masks, outdir):
     # crop_shape = (128, 128, 64)
     crop_shape = (64, 64, 64)
-    batch_size = 4
+    batch_size = 1
     epochs = 400
     learning_rate = 1e-4
 
@@ -39,7 +38,7 @@ def main(train_images, train_masks, test_images, test_masks, outdir):
 
     model = get_model(crop_shape)
 
-    model.load_weights(outdir + '/weights.h5')
+    # model.load_weights(outdir + '/weights.h5')
 
     model.compile(optimizer=Adam(lr=learning_rate), loss=dice_coef_loss,
                   metrics=[dice_coef, recall, f1_score])
@@ -50,8 +49,6 @@ def main(train_images, train_masks, test_images, test_masks, outdir):
               verbose=1, shuffle=True,
               callbacks=[model_checkpoint],
               validation_data=(test_data, test_masks))
-
-    # new_model = load_model(outdir+'/weights.h5')
 
     return 0
 
