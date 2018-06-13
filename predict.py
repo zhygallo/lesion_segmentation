@@ -63,12 +63,13 @@ def main(images, masks):
     test_data = np.load(images)
     test_masks = np.load(masks)
 
-    crop_shape = (48, 48, 48)
+    crop_shape = (64, 64, 64)
     learning_rate = 1e-4
     model = get_model(crop_shape)
     model.load_weights('weights.h5')
     model.compile(optimizer=Adam(lr=learning_rate), loss=dice_coef_loss,
                   metrics=[dice_coef, recall, f1_score])
+
 
     loss, dice, rec, f1 = model.evaluate(x=test_data, y=test_masks)
 
@@ -77,7 +78,7 @@ def main(images, masks):
     print(rec)
     print(f1)
 
-    # input_fold = '/home/zhygallo/zhygallo/tum/GuidedResearch/lesion_segmentation/raw_data_no_control/test/'
+    # input_fold = '/home/zhygallo/zhygallo/tum/GuidedResearch/lesion_segmentation/raw_data_test/'
     # strides = (5, 5, 5)
     # file_names, true_masks, pred_masks = predict_on_strides(input_fold, model, crop_shape, strides)
     # dice_coef_result = get_dice_coef(file_names, true_masks, pred_masks)

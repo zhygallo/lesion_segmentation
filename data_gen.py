@@ -73,11 +73,21 @@ def get_stride_patches(input_fold, crop_shape, strides=(1, 1, 1), normalize=True
         assert img.shape == mask.shape
         img = np.nan_to_num(img)
         mask = np.nan_to_num(mask)
-        for row in range(0, (img.shape[0] - crop_shape[0]) // strides[0], strides[0]):
-            for col in range(0, (img.shape[1] - crop_shape[1]) // strides[1], strides[1]):
-                for depth in range(0, (img.shape[2] - crop_shape[2]) // strides[2], strides[2]):
-                    crop_img = img[row:row + crop_shape[0], col:col + crop_shape[1], depth:depth + crop_shape[2]]
-                    crop_mask = mask[row:row + crop_shape[0], col:col + crop_shape[1], depth:depth + crop_shape[2]]
+        num_rows = (img.shape[0] - crop_shape[0]) // strides[0]
+        num_cols = (img.shape[1] - crop_shape[1]) // strides[1]
+        num_dep = (img.shape[2] - crop_shape[2]) // strides[2]
+        num_crops = num_rows * num_cols * num_dep
+        crop_img_np = np.zeros((num_crops, crop_shape[0], crop_shape[1], crop_shape[2], 1))
+        crop_mask_np = np.zeros((num_crops, crop_shape[0], crop_shape[1], crop_shape[2], 1))
+        num_crop = 0
+        for row in range(0, num_rows):
+            for col in range(0, num_cols):
+                for depth in range(0, num_dep):
+                    r = row * strides[0]
+                    c = col * strides[1]
+                    d = depth * strides[2]
+                    crop_img = img[r:r + crop_shape[0], c:c + crop_shape[1], d:d + crop_shape[2]]
+                    crop_mask = mask[r:r + crop_shape[0], c:c + crop_shape[1], d:d + crop_shape[2]]
                     crop_img = np.reshape(crop_img, (crop_img.shape[0], crop_img.shape[1], crop_img.shape[2], 1))
                     crop_mask = np.reshape(crop_mask, (crop_mask.shape[0], crop_mask.shape[1], crop_mask.shape[2], 1))
                     if normalize == True:
@@ -85,16 +95,25 @@ def get_stride_patches(input_fold, crop_shape, strides=(1, 1, 1), normalize=True
                         crop_img -= np.mean(crop_img)
                         if std != 0:
                             crop_img /= np.std(crop_img)
+                    crop_img_np[num_crop] = crop_img
+                    crop_mask_np[num_crop] = crop_mask
+                    num_crop += 1
                     imgs.append(crop_img)
                     masks.append(crop_mask)
 
-    # TODO Fix Memory Error For Small Crop Sizes
-    imgs = np.array(imgs)
-    masks = np.array(masks)
+        if output_fold != '':
+            np.save(os.path.join(output_fold + 'images', img_file.split('.')[0]), crop_img_np)
+            np.save(os.path.join(output_fold + 'masks', img_file.split('.')[0] + '_mask'), crop_mask_np)
 
-    if output_fold != '':
-        np.save(os.path.join(output_fold, 'images'), imgs)
-        np.save(os.path.join(output_fold, 'masks'), masks)
+
+
+    # # TODO Fix Memory Error For Small Crop Sizes
+    # imgs = np.array(imgs)
+    # masks = np.array(masks)
+    #
+    # if output_fold != '':
+    #     np.save(os.path.join(output_fold, 'images'), imgs)
+    #     np.save(os.path.join(output_fold, 'masks'), masks)
 
     return imgs, masks
 
@@ -106,25 +125,16 @@ def main():
     output_fold_test = 'np_rand_crop/test/'
     crop_shape = (64, 64, 64)
     num_patches = 20
-    balance_rate = 0.0
+    balance_rate = 0.00
     normilize = True
     # get_random_patches(input_fold_train, crop_shape, num_patches, normilize, balance_rate, output_fold_train)
     # get_random_patches(input_fold_test, crop_shape, num_patches, normilize, output_fold_test)
 
-    input_srtide_fold = 'raw_data_no_control/test/'
+    input_srtide_fold = '/home/zhygallo/zhygallo/tum/GuidedResearch/lesion_segmentation/raw_data_test/'
     strides = (32, 32, 32)
-    output_stride_fold = 'np_rand_crop/test_stride/'
-    get_stride_patches(input_srtide_fold, crop_shape, strides, output_fold=output_stride_fold)
+    output_stride_fold = '/home/zhygallo/zhygallo/tum/GuidedResearch/lesion_segmentation/strides_per_image/'
+    get_stride_patches(input_srtide_fold, crop_shape, strides, normalize=True, output_fold=output_stride_fold)
 
-    rand_train_img, rand_train_mask = get_random_patches(input_fold_train, crop_shape, num_patches, normilize,
-                                                         balance_rate)
-    stride_train_img, stride_train_mask = get_stride_patches(input_fold_train, crop_shape, strides)
-
-    train_img = np.concatenate((rand_train_img, stride_train_img), axis=0)
-    train_mask = np.concatenate((rand_train_mask, stride_train_mask), axis=0)
-
-    np.save(os.path.join(output_fold_train, 'images'), train_img)
-    np.save(os.path.join(output_fold_train, 'masks'), train_mask)
 
 if __name__ == '__main__':
     main()
