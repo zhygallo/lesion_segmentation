@@ -13,6 +13,7 @@ K.set_image_data_format('channels_last')
 from models.HighRes3DNet import get_model
 from losses import dice_coef_loss
 from metrics import dice_coef, recall, f1_score
+from data_gen import get_stride_patches
 
 
 def predict_on_strides(input_fold, model, crop_shape, strides=(1, 1, 1), normalize=True, output_fold=''):
@@ -57,19 +58,19 @@ def get_dice_coef(files, true_masks, pred_masks):
     return result
 
 @click.command()
-@click.argument('images')
-@click.argument('masks')
-def main(images, masks):
-    test_data = np.load(images)
-    test_masks = np.load(masks)
+@click.argument('test_folder')
+def main(test_folder):
 
-    crop_shape = (64, 64, 64)
+    crop_shape = (32, 32, 32)
     learning_rate = 1e-4
     model = get_model(crop_shape)
     model.load_weights('weights.h5')
     model.compile(optimizer=Adam(lr=learning_rate), loss=dice_coef_loss,
                   metrics=[dice_coef, recall, f1_score])
 
+    keep_label = 1
+    strides = (10, 10, 10)
+    test_data, test_masks = get_stride_patches(test_folder, crop_shape, keep_label, strides)
 
     loss, dice, rec, f1 = model.evaluate(x=test_data, y=test_masks)
 
