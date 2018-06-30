@@ -59,12 +59,13 @@ def get_dice_coef(files, true_masks, pred_masks):
 
 @click.command()
 @click.argument('test_folder')
-def main(test_folder):
+@click.argument('weights_path')
+def main(test_folder, weights_path):
 
     crop_shape = (32, 32, 32)
     learning_rate = 1e-4
     model = get_model(crop_shape)
-    model.load_weights('weights.h5')
+    model.load_weights(weights_path)
     model.compile(optimizer=Adam(lr=learning_rate), loss=dice_coef_loss,
                   metrics=[dice_coef, recall, f1_score])
 
